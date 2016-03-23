@@ -59,26 +59,47 @@ def eval_bool_expr(e, s):
 
     """
 
-    if type(e) is BLit:
-        return e.value
+    # Note: This could have been written in more concisely,
+    # but I chose to follow the definitions in Table 1.2 in the book strictly,
+    # in the same style of nos.py, sos.py.
+    if type(e) is BLit and e.value is True:
+        return tt
 
-    elif type(e) is Eq:
-        return eval_arith_expr(e.a1, s) == eval_arith_expr(e.a2, s)
+    elif type(e) is BLit and e.value is False:
+        return ff
 
-    elif type(e) is LE:
-        return eval_arith_expr(e.a1, s) <= eval_arith_expr(e.a2, s)
+    elif type(e) is Eq and eval_arith_expr(e.a1, s) == eval_arith_expr(e.a2, s):
+        return tt
 
-    elif type(e) is Not:
-        return not eval_bool_expr(e.b, s)
+    elif type(e) is Eq and eval_arith_expr(e.a1, s) != eval_arith_expr(e.a2, s):
+        return ff
 
-    elif type(e) is And:
-        return eval_bool_expr(e.b1, s) and eval_bool_expr(e.b2, s)
+    elif type(e) is LE and eval_arith_expr(e.a1, s) <= eval_arith_expr(e.a2, s):
+        return tt
 
-    elif type(e) is Or:
-        return eval_bool_expr(e.b1, s) or eval_bool_expr(e.b2, s)
+    elif type(e) is LE and eval_arith_expr(e.a1, s) > eval_arith_expr(e.a2, s):
+        return ff
+
+    elif type(e) is Not and eval_bool_expr(e.b, s) is ff:
+        return tt
+
+    elif type(e) is Not and eval_bool_expr(e.b, s) is tt:
+        return ff
+
+    elif type(e) is And and eval_bool_expr(e.b1, s) is tt and eval_bool_expr(e.b2, s) is tt:
+        return tt
+
+    elif type(e) is And and eval_bool_expr(e.b1, s) is ff or eval_bool_expr(e.b2, s) is ff:
+        return ff
+
+    elif type(e) is Or and eval_bool_expr(e.b1, s) is tt or eval_bool_expr(e.b2, s) is tt:
+        return tt
+
+    elif type(e) is Or and eval_bool_expr(e.b1, s) is ff and eval_bool_expr(e.b2, s) is ff:
+        return ff
 
     else:
-        assert False # Error
+        return ff # Error
 
 
 if __name__ == '__main__':

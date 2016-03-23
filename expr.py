@@ -39,6 +39,12 @@ def eval_arith_expr(e, s):
     elif type(e) is Minus:
         return eval_arith_expr(e.a1, s) - eval_arith_expr(e.a2, s)
 
+    elif type(e) is Div:
+        return eval_arith_expr(e.a1, s) / eval_arith_expr(e.a2, s)
+
+    elif type(e) is Mod:
+        return eval_arith_expr(e.a1, s) % eval_arith_expr(e.a2, s)
+
     else:
         assert False # Error
 
@@ -90,7 +96,13 @@ if __name__ == '__main__':
     print eval_bool_expr(b, {'x':10})
     print
 
-    #
-    # --- ADD MORE TESTS HERE ---
-    #
+    c = Div(Var('x'), Var('y'))
+    print c
+    print eval_arith_expr(c, {'x': 5, 'y': 3})
+    print
+
+    d = Mod(Var('x'), Var('y'))
+    print d
+    print eval_arith_expr(d, {'x': 5, 'y': 3})
+    print
 

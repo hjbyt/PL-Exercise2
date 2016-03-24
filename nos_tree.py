@@ -59,6 +59,20 @@ def nos_tree(S, s):
         premises = ()
         post_state = s
 
+    elif type(S) is Repeat:
+            sp, t1 = nos_tree(S.S, s)
+            if eval_bool_expr(S.b, sp) is tt:
+                rule = 'repeat_tt'
+                premises = (t1, )
+                post_state = sp
+            elif eval_bool_expr(S.b, sp) is ff:
+                rule = 'repeat_ff'
+                spp, t2 = nos_tree(Repeat(S.S, S.b), sp)
+                premises = (t1, t2)
+                post_state = spp
+            else:
+                assert False # Error
+
     else:
         assert False # Error
 
@@ -89,6 +103,43 @@ if __name__ == '__main__':
                 )))
     s, tree = nos_tree(prog, {})
     #print prog
+    print s
+    print
+    print tree
+    print
+    #view_tree(tree)
+
+    # Repeat tests:
+    prog = Comp(Assign('a', ALit(84)),
+           Comp(Assign('b', ALit(30)),
+                Repeat(
+                      Comp(Assign('t', Var('b')),
+                      Comp(Assign('b', Mod(Var('a'), Var('b'))),
+                           Assign('a', Var('t')))),
+                      # until
+                      Eq(Var('b'), ALit(0))
+                )))
+    #print prog
+    s, tree = nos_tree(prog, {})
+    print s
+    print
+    print tree
+    print
+    #view_tree(tree)
+
+    prog = Repeat(#x := x - 10
+                  Assign('x', Minus(Var('x'), ALit(10))),
+                  #until x < 10
+                  And(LE(Var('x'), ALit(10)), Not(Eq(Var('x'), ALit(10))))
+                  )
+    #print prog
+    s, tree = nos_tree(prog, {'x': 55})
+    print s
+    print
+    print tree
+    print
+    #view_tree(tree)
+    s, tree = nos_tree(prog, {'x':7})
     print s
     print
     print tree

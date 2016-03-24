@@ -66,9 +66,14 @@ class While(Statement):
     def __str__(self):
         return 'while ({}) do ({})'.format(self.b, self.S)
 
-#
-# --- ADD HERE IN QUESTION 3 ---
-#
+class Repeat(Statement):
+    def __init__(self, S, b):
+        self.S = S
+        self.b = b
+    def __repr__(self):
+        return 'Repeat({}, {})'.format(self.S, self.b)
+    def __str__(self):
+        return 'repeat ({}) until ({})'.format(self.S, self.b)
 
 
 # Arithmetic Expressions

@@ -49,6 +49,9 @@ def sos(S, s):
     elif type(S) is While:
         return (If(S.b, Comp(S.S, While(S.b, S.S)), Skip()), s)
 
+    elif type(S) is Repeat:
+        return (Comp(S.S, If(S.b, Skip(), Repeat(S.S, S.b))), s)
+
     else:
         assert False # Error
 
@@ -83,3 +86,23 @@ if __name__ == '__main__':
                            Assign('a', Var('t'))))
                 )))
     run_sos(prog, {})
+
+    # Repeat tests:
+    prog = Comp(Assign('a', ALit(84)),
+           Comp(Assign('b', ALit(30)),
+                Repeat(
+                      Comp(Assign('t', Var('b')),
+                      Comp(Assign('b', Mod(Var('a'), Var('b'))),
+                           Assign('a', Var('t')))),
+                      # until
+                      Eq(Var('b'), ALit(0))
+                )))
+    run_sos(prog, {})
+
+    prog = Repeat(#x := x - 10
+                  Assign('x', Minus(Var('x'), ALit(10))),
+                  #until x < 10
+                  And(LE(Var('x'), ALit(10)), Not(Eq(Var('x'), ALit(10))))
+                  )
+    run_sos(prog, {'x': 55})
+    run_sos(prog, {'x': 7})
